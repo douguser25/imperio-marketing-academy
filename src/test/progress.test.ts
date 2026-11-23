@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { modules, lessonKey, totalLessons } from "@/content";
+import { defaultModules as modules, lessonKey, courseStats } from "@/content";
+import { mergeContent } from "@/lib/content-merge";
 import { isPassing, moduleProgress, nextLesson, overallProgress, scoreQuiz } from "@/lib/progress";
 
 describe("course content", () => {
@@ -9,7 +10,7 @@ describe("course content", () => {
 
   it("has unique lesson keys", () => {
     const keys = modules.flatMap((m) => m.lessons.map((l) => lessonKey(m.id, l.id)));
-    expect(new Set(keys).size).toBe(totalLessons);
+    expect(new Set(keys).size).toBe(courseStats(modules).totalLessons);
   });
 
   it("every quiz answer points to an existing option", () => {
@@ -53,5 +54,33 @@ describe("quiz", () => {
     const allRight = quiz.map((q) => q.answer);
     expect(scoreQuiz(quiz, allRight).correct).toBe(quiz.length);
     expect(scoreQuiz(quiz, quiz.map(() => null)).correct).toBe(0);
+  });
+});
+
+describe("owner edits", () => {
+  it("a published module edit replaces the built-in module", () => {
+    const first = modules[0]!;
+    const merged = mergeContent([
+      { kind: "module", slug: first.id, position: 1, data: { ...first, title: "Novo título" } },
+    ]);
+    expect(merged.modules[0]!.title).toBe("Novo título");
+    expect(merged.modules).toHaveLength(8);
+  });
+
+  it("a deleted module disappears and numbering stays sequential", () => {
+    const merged = mergeContent([
+      { kind: "module", slug: modules[0]!.id, position: 1, data: { deleted: true } },
+    ]);
+    expect(merged.modules).toHaveLength(7);
+    expect(merged.modules[0]!.number).toBe(1);
+  });
+
+  it("drafts layered after published content win", () => {
+    const first = modules[0]!;
+    const merged = mergeContent(
+      [{ kind: "module", slug: first.id, position: 1, data: { ...first, title: "Publicado" } }],
+      [{ kind: "module", slug: first.id, position: 1, data: { ...first, title: "Rascunho" } }],
+    );
+    expect(merged.modules[0]!.title).toBe("Rascunho");
   });
 });

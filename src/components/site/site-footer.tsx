@@ -1,15 +1,17 @@
 import { Link } from "@tanstack/react-router";
 import { ShieldCheck } from "lucide-react";
 import { Logo } from "./logo";
+import { useSiteContent } from "@/lib/content-query";
 
 export function SiteFooter() {
+  const { settings } = useSiteContent();
   return (
     <footer className="mt-24 border-t border-border bg-surface">
       <div className="mx-auto grid max-w-6xl gap-10 px-5 py-12 md:grid-cols-[1.4fr_1fr_1fr]">
         <div className="space-y-4">
           <Logo />
           <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
-            Plataforma 100% educacional para aprender marketing digital e vendas do absoluto zero.
+            {settings.footerAbout}
           </p>
           <p className="flex max-w-sm items-start gap-2 text-xs leading-relaxed text-muted-foreground">
             <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" />

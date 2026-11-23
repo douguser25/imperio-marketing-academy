@@ -6,9 +6,10 @@ import { trafego } from "./modules/05-trafego";
 import { conteudo } from "./modules/06-conteudo";
 import { psicologia } from "./modules/07-psicologia";
 import { gestao } from "./modules/08-gestao";
-import type { CourseModule, Lesson } from "./types";
+import type { CourseModule } from "./types";
 
-export const modules: CourseModule[] = [
+/** Built-in course content. Published edits from the owner panel are merged over it. */
+export const defaultModules: CourseModule[] = [
   introducao,
   vendasOnline,
   afiliados,
@@ -19,43 +20,36 @@ export const modules: CourseModule[] = [
   gestao,
 ];
 
-export const totalLessons = modules.reduce((sum, m) => sum + m.lessons.length, 0);
-export const totalQuestions = modules.reduce((sum, m) => sum + m.quiz.length, 0);
-export const totalMinutes = modules.reduce(
-  (sum, m) => sum + m.lessons.reduce((s, l) => s + l.minutes, 0),
-  0,
-);
-
 /** Stable key stored in the database for a lesson. */
 export function lessonKey(moduleId: string, lessonId: string) {
   return `${moduleId}/${lessonId}`;
 }
 
-export function getModule(moduleId: string): CourseModule | undefined {
+export function courseStats(modules: CourseModule[]) {
+  return {
+    totalLessons: modules.reduce((sum, m) => sum + m.lessons.length, 0),
+    totalQuestions: modules.reduce((sum, m) => sum + m.quiz.length, 0),
+    totalMinutes: modules.reduce(
+      (sum, m) => sum + m.lessons.reduce((s, l) => s + (Number(l.minutes) || 0), 0),
+      0,
+    ),
+  };
+}
+
+export function getModule(modules: CourseModule[], moduleId: string) {
   return modules.find((m) => m.id === moduleId);
 }
 
-export interface LessonRef {
-  module: CourseModule;
-  lesson: Lesson;
-}
-
-/** Every lesson in course order, used for "previous / next" navigation. */
-export const lessonSequence: LessonRef[] = modules.flatMap((module) =>
-  module.lessons.map((lesson) => ({ module, lesson })),
-);
-
-export function getLessonContext(moduleId: string, lessonId: string) {
-  const index = lessonSequence.findIndex(
-    (ref) => ref.module.id === moduleId && ref.lesson.id === lessonId,
-  );
+export function getLessonContext(modules: CourseModule[], moduleId: string, lessonId: string) {
+  const sequence = modules.flatMap((module) => module.lessons.map((lesson) => ({ module, lesson })));
+  const index = sequence.findIndex((r) => r.module.id === moduleId && r.lesson.id === lessonId);
   if (index === -1) return undefined;
-  const current = lessonSequence[index]!;
+  const current = sequence[index]!;
   return {
     module: current.module,
     lesson: current.lesson,
     position: current.module.lessons.findIndex((l) => l.id === lessonId) + 1,
-    prev: lessonSequence[index - 1],
-    next: lessonSequence[index + 1],
+    prev: sequence[index - 1],
+    next: sequence[index + 1],
   };
 }

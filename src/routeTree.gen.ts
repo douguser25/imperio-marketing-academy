@@ -10,33 +10,175 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as DicasRouteImport } from './routes/dicas'
+import { Route as GlossarioRouteImport } from './routes/glossario'
+import { Route as ProgressoRouteImport } from './routes/progresso'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as CursosIndexRouteImport } from './routes/cursos.index'
+import { Route as CursosModuloIdIndexRouteImport } from './routes/cursos.$moduloId.index'
+import { Route as CursosModuloIdQuizRouteImport } from './routes/cursos.$moduloId.quiz'
+import { Route as CursosModuloIdAulaAulaIdRouteImport } from './routes/cursos.$moduloId.aula.$aulaId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DicasRoute = DicasRouteImport.update({
+  id: '/dicas',
+  path: '/dicas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GlossarioRoute = GlossarioRouteImport.update({
+  id: '/glossario',
+  path: '/glossario',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProgressoRoute = ProgressoRouteImport.update({
+  id: '/progresso',
+  path: '/progresso',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const CursosIndexRoute = CursosIndexRouteImport.update({
+  id: '/cursos/',
+  path: '/cursos/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CursosModuloIdIndexRoute = CursosModuloIdIndexRouteImport.update({
+  id: '/cursos/$moduloId/',
+  path: '/cursos/$moduloId/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CursosModuloIdQuizRoute = CursosModuloIdQuizRouteImport.update({
+  id: '/cursos/$moduloId/quiz',
+  path: '/cursos/$moduloId/quiz',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CursosModuloIdAulaAulaIdRoute =
+  CursosModuloIdAulaAulaIdRouteImport.update({
+    id: '/cursos/$moduloId/aula/$aulaId',
+    path: '/cursos/$moduloId/aula/$aulaId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/dicas': typeof DicasRoute
+  '/glossario': typeof GlossarioRoute
+  '/progresso': typeof ProgressoRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/admin': typeof AuthenticatedAdminRoute
+  '/cursos/': typeof CursosIndexRoute
+  '/cursos/$moduloId/quiz': typeof CursosModuloIdQuizRoute
+  '/cursos/$moduloId/': typeof CursosModuloIdIndexRoute
+  '/cursos/$moduloId/aula/$aulaId': typeof CursosModuloIdAulaAulaIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/dicas': typeof DicasRoute
+  '/glossario': typeof GlossarioRoute
+  '/progresso': typeof ProgressoRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/admin': typeof AuthenticatedAdminRoute
+  '/cursos': typeof CursosIndexRoute
+  '/cursos/$moduloId/quiz': typeof CursosModuloIdQuizRoute
+  '/cursos/$moduloId': typeof CursosModuloIdIndexRoute
+  '/cursos/$moduloId/aula/$aulaId': typeof CursosModuloIdAulaAulaIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/dicas': typeof DicasRoute
+  '/glossario': typeof GlossarioRoute
+  '/progresso': typeof ProgressoRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/cursos/': typeof CursosIndexRoute
+  '/cursos/$moduloId/quiz': typeof CursosModuloIdQuizRoute
+  '/cursos/$moduloId/': typeof CursosModuloIdIndexRoute
+  '/cursos/$moduloId/aula/$aulaId': typeof CursosModuloIdAulaAulaIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/dicas'
+    | '/glossario'
+    | '/progresso'
+    | '/reset-password'
+    | '/admin'
+    | '/cursos/'
+    | '/cursos/$moduloId/quiz'
+    | '/cursos/$moduloId/'
+    | '/cursos/$moduloId/aula/$aulaId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auth'
+    | '/dicas'
+    | '/glossario'
+    | '/progresso'
+    | '/reset-password'
+    | '/admin'
+    | '/cursos'
+    | '/cursos/$moduloId/quiz'
+    | '/cursos/$moduloId'
+    | '/cursos/$moduloId/aula/$aulaId'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/dicas'
+    | '/glossario'
+    | '/progresso'
+    | '/reset-password'
+    | '/_authenticated/admin'
+    | '/cursos/'
+    | '/cursos/$moduloId/quiz'
+    | '/cursos/$moduloId/'
+    | '/cursos/$moduloId/aula/$aulaId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
+  DicasRoute: typeof DicasRoute
+  GlossarioRoute: typeof GlossarioRoute
+  ProgressoRoute: typeof ProgressoRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
+  CursosIndexRoute: typeof CursosIndexRoute
+  CursosModuloIdQuizRoute: typeof CursosModuloIdQuizRoute
+  CursosModuloIdIndexRoute: typeof CursosModuloIdIndexRoute
+  CursosModuloIdAulaAulaIdRoute: typeof CursosModuloIdAulaAulaIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +190,109 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dicas': {
+      id: '/dicas'
+      path: '/dicas'
+      fullPath: '/dicas'
+      preLoaderRoute: typeof DicasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/glossario': {
+      id: '/glossario'
+      path: '/glossario'
+      fullPath: '/glossario'
+      preLoaderRoute: typeof GlossarioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/progresso': {
+      id: '/progresso'
+      path: '/progresso'
+      fullPath: '/progresso'
+      preLoaderRoute: typeof ProgressoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/cursos/': {
+      id: '/cursos/'
+      path: '/cursos'
+      fullPath: '/cursos/'
+      preLoaderRoute: typeof CursosIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cursos/$moduloId/': {
+      id: '/cursos/$moduloId/'
+      path: '/cursos/$moduloId'
+      fullPath: '/cursos/$moduloId/'
+      preLoaderRoute: typeof CursosModuloIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cursos/$moduloId/quiz': {
+      id: '/cursos/$moduloId/quiz'
+      path: '/cursos/$moduloId/quiz'
+      fullPath: '/cursos/$moduloId/quiz'
+      preLoaderRoute: typeof CursosModuloIdQuizRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cursos/$moduloId/aula/$aulaId': {
+      id: '/cursos/$moduloId/aula/$aulaId'
+      path: '/cursos/$moduloId/aula/$aulaId'
+      fullPath: '/cursos/$moduloId/aula/$aulaId'
+      preLoaderRoute: typeof CursosModuloIdAulaAulaIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
+  DicasRoute: DicasRoute,
+  GlossarioRoute: GlossarioRoute,
+  ProgressoRoute: ProgressoRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
+  CursosIndexRoute: CursosIndexRoute,
+  CursosModuloIdQuizRoute: CursosModuloIdQuizRoute,
+  CursosModuloIdIndexRoute: CursosModuloIdIndexRoute,
+  CursosModuloIdAulaAulaIdRoute: CursosModuloIdAulaAulaIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

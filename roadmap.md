@@ -9,4 +9,4 @@
 - [ ] Metadados por página, testes, verificação visual
 - [ ] Conteúdo (aulas, glossário, dicas, configurações) salvo no banco para ser editável
 - [ ] Área do proprietário em /admin: login, permissão de proprietário verificada no servidor, editar aulas/módulos/questionários/glossário/dicas/configurações, botão Publicar
-- [ ] Definir o e-mail do proprietário (aguardando resposta)
+- [x] E-mail do proprietário definido

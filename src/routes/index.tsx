@@ -11,9 +11,9 @@ import {
 import heroImage from "@/assets/hero-imperio.jpg";
 import { Button } from "@/components/ui/button";
 import { ModuleBadge } from "@/components/site/module-icon";
-import { modules, totalLessons, totalMinutes, totalQuestions } from "@/content";
-import { glossary } from "@/content/glossary";
+import { courseStats } from "@/content";
 import { useAuth } from "@/hooks/use-auth";
+import { useSiteContent } from "@/lib/content-query";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -62,6 +62,10 @@ const features = [
 
 function Index() {
   const { user } = useAuth();
+  const { modules, glossary, settings } = useSiteContent();
+  const { totalLessons, totalMinutes, totalQuestions } = courseStats(modules);
+  const firstModule = modules[0];
+  const firstLesson = firstModule?.lessons[0];
   const stats = [
     { value: modules.length, label: "módulos" },
     { value: totalLessons, label: "aulas" },
@@ -82,14 +86,13 @@ function Index() {
         <div className="absolute inset-0 bg-fade-left" />
         <div className="absolute inset-x-0 bottom-0 h-40 bg-fade-bottom" />
         <div className="relative mx-auto flex min-h-[78vh] max-w-6xl flex-col justify-center px-5 py-20">
-          <p className="eyebrow animate-fade-up">Plataforma de ensino · 100% educacional</p>
+          <p className="eyebrow animate-fade-up">{settings.heroEyebrow}</p>
           <h1 className="mt-5 max-w-3xl animate-fade-up text-5xl font-semibold leading-[1.02] md:text-7xl [animation-delay:80ms]">
-            Aprenda marketing digital e vendas{" "}
-            <span className="text-gold animate-shimmer italic">do absoluto zero.</span>
+            {settings.heroTitle}{" "}
+            <span className="text-gold animate-shimmer italic">{settings.heroHighlight}</span>
           </h1>
           <p className="mt-6 max-w-xl animate-fade-up text-base leading-relaxed text-muted-foreground md:text-lg [animation-delay:160ms]">
-            Entenda como o mercado digital funciona, como divulgar produtos, usar as redes sociais e
-            planejar estratégias — com aulas claras, exemplos práticos e questionários.
+            {settings.heroSubtitle}
           </p>
           <div className="mt-9 flex animate-fade-up flex-wrap gap-3 [animation-delay:240ms]">
             <Button asChild variant="hero" size="xl">
@@ -111,7 +114,7 @@ function Index() {
           </div>
           <p className="mt-6 flex animate-fade-up items-center gap-2 text-xs text-muted-foreground [animation-delay:320ms]">
             <ShieldCheck className="h-4 w-4 text-primary" />
-            Sem loja, sem vendas, sem promessas de ganho. Só conhecimento.
+            {settings.trustLine}
           </p>
         </div>
       </section>
@@ -138,7 +141,9 @@ function Index() {
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="eyebrow">A trilha completa</p>
-            <h2 className="mt-3 text-4xl font-semibold md:text-5xl">8 módulos, do básico à estratégia</h2>
+            <h2 className="mt-3 text-4xl font-semibold md:text-5xl">
+              {modules.length} módulos, do básico à estratégia
+            </h2>
           </div>
           <p className="max-w-sm text-sm text-muted-foreground">
             Cerca de {Math.round(totalMinutes / 60)} horas de leitura organizadas na ordem ideal para
@@ -191,18 +196,19 @@ function Index() {
           <div>
             <p className="eyebrow">Nosso compromisso</p>
             <h2 className="mt-3 text-4xl font-semibold md:text-5xl">
-              Educação de verdade, <span className="text-gold">sem atalhos falsos.</span>
+              {settings.commitmentTitle}{" "}
+              <span className="text-gold">{settings.commitmentHighlight}</span>
             </h2>
           </div>
           <div className="space-y-4 text-muted-foreground">
-            <p className="leading-relaxed">
-              O IMPÉRIO DIGITAL existe apenas para ensinar. Aqui você não vai encontrar loja,
-              carrinho ou produtos à venda — nem promessas de dinheiro fácil.
-            </p>
-            <p className="leading-relaxed">
-              Resultados no mercado digital dependem de estudo, prática, constância e contexto. Nosso
-              papel é dar a você uma base sólida para entender o mercado e tomar boas decisões.
-            </p>
+            {settings.commitmentBody
+              .split(/\n\s*\n/)
+              .filter(Boolean)
+              .map((p) => (
+                <p key={p.slice(0, 24)} className="leading-relaxed">
+                  {p}
+                </p>
+              ))}
           </div>
         </div>
       </section>
@@ -218,14 +224,16 @@ function Index() {
             aparelho.
           </p>
           <div className="relative mt-8 flex justify-center">
-            <Button asChild variant="hero" size="xl">
-              <Link
-                to="/cursos/$moduloId/aula/$aulaId"
-                params={{ moduloId: modules[0]!.id, aulaId: modules[0]!.lessons[0]!.id }}
-              >
-                Abrir a primeira aula <ArrowRight />
-              </Link>
-            </Button>
+            {firstModule && firstLesson ? (
+              <Button asChild variant="hero" size="xl">
+                <Link
+                  to="/cursos/$moduloId/aula/$aulaId"
+                  params={{ moduloId: firstModule.id, aulaId: firstLesson.id }}
+                >
+                  Abrir a primeira aula <ArrowRight />
+                </Link>
+              </Button>
+            ) : null}
           </div>
         </div>
       </section>

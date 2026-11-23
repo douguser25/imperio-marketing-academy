@@ -8,6 +8,13 @@
       "when": 1795473618741,
       "tag": "0000_create_progress_tables",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1795474383886,
+      "tag": "0001_admin_roles_and_content",
+      "breakpoints": true
     }
   ]
 }
