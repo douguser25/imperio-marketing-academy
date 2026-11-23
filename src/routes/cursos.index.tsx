@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, CheckCircle2, Clock } from "lucide-react";
 import { PageHero } from "@/components/site/page-hero";
+import { CategoryMenu } from "@/components/site/category-menu";
 import { ModuleBadge } from "@/components/site/module-icon";
 import { Progress } from "@/components/ui/progress";
 import { courseStats } from "@/content";
@@ -17,7 +18,7 @@ export const Route = createFileRoute("/cursos/")({
       {
         name: "description",
         content:
-          "Todos os módulos do IMPÉRIO DIGITAL: introdução ao marketing digital, vendas online, afiliados, redes sociais, tráfego, conteúdo, psicologia e gestão.",
+          "Todos os módulos do IMPÉRIO DIGITAL: introdução ao marketing digital, vendas online, afiliados, redes sociais, tráfego, conteúdo, psicologia, gestão e inteligência artificial.",
       },
       { property: "og:title", content: "Cursos e módulos — IMPÉRIO DIGITAL" },
       {
@@ -41,16 +42,21 @@ function CoursesPage() {
   return (
     <>
       <PageHero
-        eyebrow="Trilha de aprendizado"
+        eyebrow="Cursos"
         title={
           <>
-            Todos os <span className="text-gold">módulos</span>
+            Explore por <span className="text-gold">categoria</span>
           </>
         }
-        description={`${modules.length} módulos, ${stats.totalLessons} aulas e ${stats.totalQuestions} questões. Siga a ordem sugerida ou escolha o tema que mais precisa agora.`}
+        description={`${stats.totalLessons} aulas e ${stats.totalQuestions} questões. Toque na seta de uma categoria para ver os temas e abrir as aulas.`}
       />
-      <section className="mx-auto max-w-6xl px-5 pt-12">
-        <div className="space-y-4">
+      <section className="mx-auto max-w-4xl px-5 pt-10">
+        <CategoryMenu modules={modules} />
+      </section>
+      <section className="mx-auto max-w-6xl px-5 pt-16">
+        <p className="eyebrow">Trilha completa</p>
+        <h2 className="mt-2 text-3xl font-semibold md:text-4xl">Todos os {modules.length} módulos em ordem</h2>
+        <div className="mt-6 space-y-4">
           {modules.map((m, i) => {
             const p = moduleProgress(m, completed ?? new Set());
             const minutes = m.lessons.reduce((s, l) => s + (Number(l.minutes) || 0), 0);

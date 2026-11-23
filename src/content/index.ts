@@ -6,6 +6,7 @@ import { trafego } from "./modules/05-trafego";
 import { conteudo } from "./modules/06-conteudo";
 import { psicologia } from "./modules/07-psicologia";
 import { gestao } from "./modules/08-gestao";
+import { inteligenciaArtificial } from "./modules/09-inteligencia-artificial";
 import type { CourseModule } from "./types";
 
 /** Built-in course content. Published edits from the owner panel are merged over it. */
@@ -18,6 +19,7 @@ export const defaultModules: CourseModule[] = [
   conteudo,
   psicologia,
   gestao,
+  inteligenciaArtificial,
 ];
 
 /** Stable key stored in the database for a lesson. */

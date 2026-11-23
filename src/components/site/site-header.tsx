@@ -2,7 +2,9 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { LogOut, Menu, UserRound } from "lucide-react";
 import { useState } from "react";
+import { CategoryMenu } from "./category-menu";
 import { Logo } from "./logo";
+import { useSiteContent } from "@/lib/content-query";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { displayName, useAuth } from "@/hooks/use-auth";
@@ -21,6 +23,7 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { modules } = useSiteContent();
 
   async function signOut() {
     await queryClient.cancelQueries();
@@ -76,14 +79,14 @@ export function SiteHeader() {
               <Menu />
             </Button>
           </SheetTrigger>
-          <SheetContent side="right" className="w-72 border-border bg-surface">
+          <SheetContent side="right" className="w-80 overflow-y-auto border-border bg-surface pb-10">
             <SheetHeader>
               <SheetTitle className="text-left">
                 <Logo />
               </SheetTitle>
             </SheetHeader>
             <nav className="mt-6 flex flex-col gap-1 px-4">
-              {nav.map((item) => (
+              {nav.filter((item) => item.to !== "/cursos").map((item) => (
                 <Link
                   key={item.to}
                   to={item.to}
@@ -95,6 +98,17 @@ export function SiteHeader() {
                 </Link>
               ))}
             </nav>
+            <div className="mt-6 px-4">
+              <p className="eyebrow mb-3">Categorias</p>
+              <CategoryMenu modules={modules} compact onNavigate={() => setOpen(false)} />
+              <Link
+                to="/cursos"
+                onClick={() => setOpen(false)}
+                className="mt-3 block rounded-lg px-3 py-2 text-sm text-primary hover:bg-accent"
+              >
+                Ver todos os módulos →
+              </Link>
+            </div>
             <div className="mt-6 border-t border-border px-4 pt-6">
               {user ? (
                 <div className="space-y-3">

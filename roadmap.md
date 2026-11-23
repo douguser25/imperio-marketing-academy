@@ -10,3 +10,5 @@
 - [ ] Conteúdo (aulas, glossário, dicas, configurações) salvo no banco para ser editável
 - [ ] Área do proprietário em /admin: login, permissão de proprietário verificada no servidor, editar aulas/módulos/questionários/glossário/dicas/configurações, botão Publicar
 - [x] E-mail do proprietário definido
+- [ ] Menus expansíveis com setas por categoria (Marketing Digital, Redes Sociais, Empreendedorismo, Tecnologia) levando às aulas existentes, sem alterar aulas
+- [ ] Novo Módulo 9: Inteligência Artificial no Marketing (aulas + questionário), ligado à subcategoria IA

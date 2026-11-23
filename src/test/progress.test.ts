@@ -4,8 +4,9 @@ import { mergeContent } from "@/lib/content-merge";
 import { isPassing, moduleProgress, nextLesson, overallProgress, scoreQuiz } from "@/lib/progress";
 
 describe("course content", () => {
-  it("has the 8 modules from the brief", () => {
-    expect(modules).toHaveLength(8);
+  it("has the 8 modules from the brief plus the AI module", () => {
+    expect(modules).toHaveLength(9);
+    expect(modules[8]!.id).toBe("inteligencia-artificial-no-marketing");
   });
 
   it("has unique lesson keys", () => {
@@ -64,14 +65,14 @@ describe("owner edits", () => {
       { kind: "module", slug: first.id, position: 1, data: { ...first, title: "Novo título" } },
     ]);
     expect(merged.modules[0]!.title).toBe("Novo título");
-    expect(merged.modules).toHaveLength(8);
+    expect(merged.modules).toHaveLength(9);
   });
 
   it("a deleted module disappears and numbering stays sequential", () => {
     const merged = mergeContent([
       { kind: "module", slug: modules[0]!.id, position: 1, data: { deleted: true } },
     ]);
-    expect(merged.modules).toHaveLength(7);
+    expect(merged.modules).toHaveLength(8);
     expect(merged.modules[0]!.number).toBe(1);
   });
 
@@ -82,5 +83,30 @@ describe("owner edits", () => {
       [{ kind: "module", slug: first.id, position: 1, data: { ...first, title: "Rascunho" } }],
     );
     expect(merged.modules[0]!.title).toBe("Rascunho");
+  });
+});
+
+describe("category navigation", () => {
+  it("every category reference points to an existing module and lesson", async () => {
+    const { categories } = await import("@/content/categories");
+    for (const c of categories) {
+      for (const s of c.subcategories) {
+        for (const ref of s.items) {
+          const m = modules.find((x) => x.id === ref.module);
+          expect(m, `${s.id} → ${ref.module}`).toBeDefined();
+          if (ref.lesson) expect(m!.lessons.some((l) => l.id === ref.lesson), `${s.id} → ${ref.lesson}`).toBe(true);
+        }
+      }
+    }
+  });
+
+  it("has the 4 main categories requested", async () => {
+    const { categories } = await import("@/content/categories");
+    expect(categories.map((c) => c.title)).toEqual([
+      "Marketing Digital",
+      "Redes Sociais",
+      "Empreendedorismo",
+      "Tecnologia",
+    ]);
   });
 });

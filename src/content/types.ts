@@ -6,7 +6,8 @@ export type ModuleIcon =
   | "traffic"
   | "pen"
   | "brain"
-  | "chart";
+  | "chart"
+  | "sparkles";
 
 export interface LessonSection {
   heading: string;

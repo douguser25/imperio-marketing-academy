@@ -29,6 +29,7 @@ const iconOptions: { value: ModuleIcon; label: string }[] = [
   { value: "pen", label: "Caneta" },
   { value: "brain", label: "Cérebro" },
   { value: "chart", label: "Gráfico" },
+  { value: "sparkles", label: "Brilho (IA)" },
 ];
 
 function move<T>(arr: T[], from: number, to: number) {

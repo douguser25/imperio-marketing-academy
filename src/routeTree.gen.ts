@@ -17,6 +17,7 @@ import { Route as GlossarioRouteImport } from './routes/glossario'
 import { Route as ProgressoRouteImport } from './routes/progresso'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as CategoriasSubcategoriaIdRouteImport } from './routes/categorias.$subcategoriaId'
 import { Route as CursosIndexRouteImport } from './routes/cursos.index'
 import { Route as CursosModuloIdIndexRouteImport } from './routes/cursos.$moduloId.index'
 import { Route as CursosModuloIdQuizRouteImport } from './routes/cursos.$moduloId.quiz'
@@ -61,6 +62,12 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const CategoriasSubcategoriaIdRoute =
+  CategoriasSubcategoriaIdRouteImport.update({
+    id: '/categorias/$subcategoriaId',
+    path: '/categorias/$subcategoriaId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const CursosIndexRoute = CursosIndexRouteImport.update({
   id: '/cursos/',
   path: '/cursos/',
@@ -91,6 +98,7 @@ export interface FileRoutesByFullPath {
   '/progresso': typeof ProgressoRoute
   '/reset-password': typeof ResetPasswordRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/categorias/$subcategoriaId': typeof CategoriasSubcategoriaIdRoute
   '/cursos/': typeof CursosIndexRoute
   '/cursos/$moduloId/quiz': typeof CursosModuloIdQuizRoute
   '/cursos/$moduloId/': typeof CursosModuloIdIndexRoute
@@ -104,6 +112,7 @@ export interface FileRoutesByTo {
   '/progresso': typeof ProgressoRoute
   '/reset-password': typeof ResetPasswordRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/categorias/$subcategoriaId': typeof CategoriasSubcategoriaIdRoute
   '/cursos': typeof CursosIndexRoute
   '/cursos/$moduloId/quiz': typeof CursosModuloIdQuizRoute
   '/cursos/$moduloId': typeof CursosModuloIdIndexRoute
@@ -119,6 +128,7 @@ export interface FileRoutesById {
   '/progresso': typeof ProgressoRoute
   '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/categorias/$subcategoriaId': typeof CategoriasSubcategoriaIdRoute
   '/cursos/': typeof CursosIndexRoute
   '/cursos/$moduloId/quiz': typeof CursosModuloIdQuizRoute
   '/cursos/$moduloId/': typeof CursosModuloIdIndexRoute
@@ -134,6 +144,7 @@ export interface FileRouteTypes {
     | '/progresso'
     | '/reset-password'
     | '/admin'
+    | '/categorias/$subcategoriaId'
     | '/cursos/'
     | '/cursos/$moduloId/quiz'
     | '/cursos/$moduloId/'
@@ -147,6 +158,7 @@ export interface FileRouteTypes {
     | '/progresso'
     | '/reset-password'
     | '/admin'
+    | '/categorias/$subcategoriaId'
     | '/cursos'
     | '/cursos/$moduloId/quiz'
     | '/cursos/$moduloId'
@@ -161,6 +173,7 @@ export interface FileRouteTypes {
     | '/progresso'
     | '/reset-password'
     | '/_authenticated/admin'
+    | '/categorias/$subcategoriaId'
     | '/cursos/'
     | '/cursos/$moduloId/quiz'
     | '/cursos/$moduloId/'
@@ -175,6 +188,7 @@ export interface RootRouteChildren {
   GlossarioRoute: typeof GlossarioRoute
   ProgressoRoute: typeof ProgressoRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  CategoriasSubcategoriaIdRoute: typeof CategoriasSubcategoriaIdRoute
   CursosIndexRoute: typeof CursosIndexRoute
   CursosModuloIdQuizRoute: typeof CursosModuloIdQuizRoute
   CursosModuloIdIndexRoute: typeof CursosModuloIdIndexRoute
@@ -239,6 +253,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/categorias/$subcategoriaId': {
+      id: '/categorias/$subcategoriaId'
+      path: '/categorias/$subcategoriaId'
+      fullPath: '/categorias/$subcategoriaId'
+      preLoaderRoute: typeof CategoriasSubcategoriaIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/cursos/': {
       id: '/cursos/'
       path: '/cursos'
@@ -289,6 +310,7 @@ const rootRouteChildren: RootRouteChildren = {
   GlossarioRoute: GlossarioRoute,
   ProgressoRoute: ProgressoRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  CategoriasSubcategoriaIdRoute: CategoriasSubcategoriaIdRoute,
   CursosIndexRoute: CursosIndexRoute,
   CursosModuloIdQuizRoute: CursosModuloIdQuizRoute,
   CursosModuloIdIndexRoute: CursosModuloIdIndexRoute,

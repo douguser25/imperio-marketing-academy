@@ -22,13 +22,13 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Plataforma educacional gratuita com 8 módulos, aulas completas, tutoriais, questionários e glossário de marketing digital e vendas para iniciantes.",
+          "Plataforma educacional gratuita com 9 módulos, aulas completas, tutoriais, questionários e glossário de marketing digital e vendas para iniciantes.",
       },
       { property: "og:title", content: "IMPÉRIO DIGITAL — Aprenda marketing digital do zero" },
       {
         property: "og:description",
         content:
-          "8 módulos com aulas, exemplos práticos e questionários para aprender vendas e marketing digital desde o início.",
+          "9 módulos com aulas, exemplos práticos e questionários para aprender vendas e marketing digital desde o início.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -150,7 +150,7 @@ function Index() {
             quem está começando.
           </p>
         </div>
-        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {modules.map((m, i) => (
             <Link
               key={m.id}

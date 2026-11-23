@@ -7,6 +7,7 @@ import {
   Radar,
   Rocket,
   Share2,
+  Sparkles,
   type LucideProps,
 } from "lucide-react";
 import type { ModuleIcon as IconName } from "@/content/types";
@@ -20,6 +21,7 @@ const icons = {
   pen: PenTool,
   brain: Brain,
   chart: BarChart3,
+  sparkles: Sparkles,
 } satisfies Record<IconName, unknown>;
 
 export function ModuleIcon({ name, ...props }: { name: IconName } & LucideProps) {
