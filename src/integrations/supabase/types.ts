@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      account_deletion_requests: {
+        Row: {
+          created_at: string
+          email: string | null
+          reason: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          reason?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          reason?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       content_drafts: {
         Row: {
           data: Json
@@ -98,6 +119,39 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          accent_color: string
+          avatar_path: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          primary_color: string
+          theme: string
+          updated_at: string
+        }
+        Insert: {
+          accent_color?: string
+          avatar_path?: string | null
+          created_at?: string
+          display_name?: string | null
+          id: string
+          primary_color?: string
+          theme?: string
+          updated_at?: string
+        }
+        Update: {
+          accent_color?: string
+          avatar_path?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          primary_color?: string
+          theme?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       quiz_results: {
         Row: {
           attempts: number
@@ -154,6 +208,17 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      list_my_sessions: {
+        Args: never
+        Returns: {
+          created_at: string
+          id: string
+          ip: string
+          is_current: boolean
+          last_active: string
+          user_agent: string
+        }[]
       }
       publish_content: { Args: never; Returns: number }
     }

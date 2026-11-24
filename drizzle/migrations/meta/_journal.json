@@ -29,6 +29,20 @@
       "when": 1795479025718,
       "tag": "0003_harden_function_permissions",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1795479458550,
+      "tag": "0004_user_settings",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1795479481641,
+      "tag": "0005_retire_deletion_requests",
+      "breakpoints": true
     }
   ]
 }

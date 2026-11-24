@@ -1,0 +1,1 @@
+COMMENT ON TABLE public.account_deletion_requests IS 'DEPRECATED: account deletion is immediate after the user confirms; requests are no longer stored.';

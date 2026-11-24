@@ -13,3 +13,6 @@
 - [x] Menus expansíveis com setas por categoria (Marketing Digital, Redes Sociais, Empreendedorismo, Tecnologia) levando às aulas existentes, sem alterar aulas
 - [x] Novo Módulo 9: Inteligência Artificial no Marketing (aulas + questionário), ligado à subcategoria IA
 - [x] Revisão geral: páginas no celular e computador, login, progresso, questionários e /admin; permissões do banco reforçadas
+- [ ] Página Configurações: personalização (cor principal, destaque, tema claro/escuro) salva por usuário
+- [ ] Minha conta: nome, foto, e-mail com confirmação, senha com verificação
+- [ ] Segurança: sair, sessões conectadas, exclusão imediata da conta após confirmação
