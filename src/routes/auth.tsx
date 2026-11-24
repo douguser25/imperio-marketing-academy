@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Logo } from "@/components/site/logo";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 
 const REDIRECT_KEY = "imperio:after-login";
+const isEnglish = typeof navigator !== "undefined" && navigator.language.toLowerCase().startsWith("en");
 
 function safePath(value: unknown): string | undefined {
   return typeof value === "string" && value.startsWith("/") && !value.startsWith("//")
@@ -15,8 +16,12 @@ function safePath(value: unknown): string | undefined {
 }
 
 export const Route = createFileRoute("/auth")({
-  validateSearch: (search: Record<string, unknown>): { redirect: string | undefined } => ({
+  validateSearch: (search: Record<string, unknown>) => ({
     redirect: safePath(search["redirect"]),
+    error: typeof search["error"] === "string" ? search["error"] : undefined,
+    error_description:
+      typeof search["error_description"] === "string" ? search["error_description"] : undefined,
+    error_code: typeof search["error_code"] === "string" ? search["error_code"] : undefined,
   }),
   head: () => ({
     meta: [
@@ -47,7 +52,7 @@ function GoogleLogo() {
 }
 
 function AuthPage() {
-  const { redirect } = Route.useSearch();
+  const { redirect, error, error_description, error_code } = Route.useSearch();
   const navigate = useNavigate();
   const { user, loading } = useAuth();
   const [busy, setBusy] = useState(false);
@@ -55,6 +60,20 @@ function AuthPage() {
   useEffect(() => {
     if (redirect) sessionStorage.setItem(REDIRECT_KEY, redirect);
   }, [redirect]);
+
+  useEffect(() => {
+    if (error || error_description || error_code) {
+      toast.error(
+        error_description ||
+          (isEnglish ? "Google sign-in could not be completed. Please try again." : "Não foi possível concluir o login com Google. Tente novamente."),
+      );
+      navigate({
+        to: "/auth",
+        search: { redirect, error: undefined, error_description: undefined, error_code: undefined },
+        replace: true,
+      });
+    }
+  }, [error, error_description, error_code, navigate, redirect]);
 
   useEffect(() => {
     if (!loading && user) {
@@ -67,16 +86,21 @@ function AuthPage() {
   async function social() {
     setBusy(true);
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
+      const { error: authError } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/auth`,
+          redirectTo: new URL("/auth", window.location.origin).toString(),
           queryParams: { prompt: "select_account" },
         },
       });
-      if (error) throw error;
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "Não foi possível entrar.";
+      if (authError) throw authError;
+    } catch (authError) {
+      const message =
+        authError instanceof Error
+          ? authError.message
+          : isEnglish
+            ? "Unable to sign in. Please try again."
+            : "Não foi possível entrar. Tente novamente.";
       toast.error(message);
       setBusy(false);
     }
@@ -87,22 +111,33 @@ function AuthPage() {
       <div className="pointer-events-none absolute inset-0 bg-grid" />
       <div className="relative w-full max-w-md animate-fade-up rounded-3xl border border-border bg-card-imperial p-8 shadow-card">
         <div className="flex justify-center"><Logo /></div>
-        <h1 className="mt-6 text-center text-3xl font-semibold">Entrar na sua conta</h1>
+        <h1 className="mt-6 text-center text-3xl font-semibold">
+          {isEnglish ? "Sign in to your account" : "Entrar na sua conta"}
+        </h1>
         <p className="mt-2 text-center text-sm text-muted-foreground">
-          Salve seu progresso e continue de qualquer aparelho.
+          {isEnglish
+            ? "Save your progress and continue on any device."
+            : "Salve seu progresso e continue de qualquer aparelho."}
         </p>
 
         <div className="mt-6 space-y-3">
           <Button type="button" variant="google" className="h-11 w-full" disabled={busy} onClick={social}>
-            <GoogleLogo /> {busy ? "Conectando..." : "Continuar com Google"}
+            <GoogleLogo />
+            {busy
+              ? isEnglish ? "Connecting..." : "Conectando..."
+              : isEnglish ? "Continue with Google" : "Continuar com Google"}
           </Button>
         </div>
 
         <p className="mt-6 text-center text-sm text-muted-foreground">
-          Ao continuar, você cria ou acessa sua conta usando o provedor escolhido.
+          {isEnglish
+            ? "Continue to create or access your account with Google."
+            : "Ao continuar, você cria ou acessa sua conta usando o Google."}
         </p>
         <p className="mt-4 text-center">
-          <Link to="/" className="text-xs text-muted-foreground hover:text-foreground">Voltar ao início</Link>
+          <Link to="/" className="text-xs text-muted-foreground hover:text-foreground">
+            {isEnglish ? "Back to home" : "Voltar ao início"}
+          </Link>
         </p>
       </div>
     </div>

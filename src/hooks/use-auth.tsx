@@ -14,13 +14,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AuthState>({ user: null, session: null, loading: true });
 
   useEffect(() => {
+    let active = true;
+    let receivedAuthEvent = false;
     const { data } = supabase.auth.onAuthStateChange((_event, session) => {
-      setState({ session, user: session?.user ?? null, loading: false });
+      receivedAuthEvent = true;
+      if (active) setState({ session, user: session?.user ?? null, loading: false });
     });
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setState({ session, user: session?.user ?? null, loading: false });
+
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      if (!active || receivedAuthEvent) return;
+      if (error) console.error("[Auth] Unable to restore the saved session:", error.message);
+      setState({ session: error ? null : session, user: error ? null : session?.user ?? null, loading: false });
+    }).catch((error: unknown) => {
+      if (!active || receivedAuthEvent) return;
+      console.error("[Auth] Unable to restore the saved session:", error);
+      setState({ session: null, user: null, loading: false });
     });
-    return () => data.subscription.unsubscribe();
+
+    return () => {
+      active = false;
+      data.subscription.unsubscribe();
+    };
   }, []);
 
   return <AuthContext.Provider value={state}>{children}</AuthContext.Provider>;

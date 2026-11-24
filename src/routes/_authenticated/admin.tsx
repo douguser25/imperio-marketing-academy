@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowDown, ArrowUp, Plus, Rocket, ShieldAlert, Undo2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { AuthSettings } from "@/components/admin/auth-settings";
 import { ModuleEditor } from "@/components/admin/module-editor";
 import { GlossaryEditor, SettingsEditor, TipsEditor } from "@/components/admin/list-editors";
 import { ModuleBadge } from "@/components/site/module-icon";
@@ -163,6 +164,7 @@ function OwnerPanel() {
           <TabsTrigger value="glossary">Glossário</TabsTrigger>
           <TabsTrigger value="tips">Dicas</TabsTrigger>
           <TabsTrigger value="settings">Textos do site</TabsTrigger>
+          <TabsTrigger value="authentication">Autenticação e segurança</TabsTrigger>
         </TabsList>
 
         <TabsContent value="modules" className="mt-6">
@@ -235,6 +237,10 @@ function OwnerPanel() {
             saving={save.isPending}
             onSave={(s) => saveRows([{ kind: "settings", slug: "main", position: 0, data: s }])}
           />
+        </TabsContent>
+
+        <TabsContent value="authentication" className="mt-6">
+          <AuthSettings />
         </TabsContent>
       </Tabs>
     </div>
