@@ -1,13 +1,9 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { LovableMark } from "@lovable.dev/cloud-auth-js/react";
 import { useEffect, useState, type FormEvent } from "react";
 import { toast } from "sonner";
 import { Logo } from "@/components/site/logo";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/use-auth";
-import { lovable } from "@/integrations/lovable/index";
 import { supabase } from "@/integrations/supabase/client";
 
 const REDIRECT_KEY = "imperio:after-login";
@@ -32,7 +28,7 @@ export const Route = createFileRoute("/auth")({
       { property: "og:title", content: "Entrar — IMPÉRIO DIGITAL" },
       { property: "og:description", content: "Acesse sua conta para salvar seu progresso." },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:card", content: "social" },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -50,16 +46,19 @@ function GoogleLogo() {
   );
 }
 
+function AppleLogo() {
+  return (
+    <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" className="!size-[18px]" fill="currentColor">
+      <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.21 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.79 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.53 4.09zM12.03 7.25C11.88 5.02 13.69 3.18 15.77 3c.29 2.58-2.34 4.5-3.74 4.25z" />
+    </svg>
+  );
+}
+
 function AuthPage() {
   const { redirect } = Route.useSearch();
   const navigate = useNavigate();
   const { user, loading } = useAuth();
-  const [mode, setMode] = useState<"signin" | "signup" | "forgot">("signin");
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [busy, setBusy] = useState(false);
-  const [notice, setNotice] = useState<string | null>(null);
+  const [busy, setBusy] = useState<"google" | "apple" | null>(null);
 
   useEffect(() => {
     if (redirect) sessionStorage.setItem(REDIRECT_KEY, redirect);
@@ -73,144 +72,48 @@ function AuthPage() {
     }
   }, [user, loading, navigate]);
 
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    setBusy(true);
-    setNotice(null);
+  async function social(provider: "google" | "apple") {
+    setBusy(provider);
     try {
-      if (mode === "signin") {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-      } else if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: { emailRedirectTo: window.location.origin + "/auth", data: { full_name: name } },
-        });
-        if (error) throw error;
-        setNotice("Conta criada! Confirme pelo link que enviamos para o seu e-mail e depois entre.");
-        setMode("signin");
-      } else {
-        const { error } = await supabase.auth.resetPasswordForEmail(email, {
-          redirectTo: `${window.location.origin}/reset-password`,
-        });
-        if (error) throw error;
-        setNotice("Se houver uma conta com esse e-mail, você receberá um link para criar nova senha.");
-      }
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Algo deu errado.";
-      toast.error(
-        message.includes("Invalid login credentials")
-          ? "E-mail ou senha incorretos."
-          : message.includes("Email not confirmed")
-            ? "Confirme seu e-mail antes de entrar."
-            : message,
-      );
-    } finally {
-      setBusy(false);
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: `${window.location.origin}/auth`,
+          queryParams: provider === "google" ? { prompt: "select_account" } : undefined,
+        },
+      });
+      if (error) throw error;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Não foi possível entrar.";
+      toast.error(message);
+      setBusy(null);
     }
-  }
-
-  async function social(provider: "google" | "lovable") {
-    const result = await lovable.auth.signInWithOAuth(provider, {
-      redirect_uri: window.location.origin + "/auth",
-    });
-    if (result.error) toast.error("Não foi possível entrar. Tente novamente.");
   }
 
   return (
     <div className="relative flex min-h-[80vh] items-center justify-center overflow-hidden bg-hero px-5 py-16">
       <div className="pointer-events-none absolute inset-0 bg-grid" />
       <div className="relative w-full max-w-md animate-fade-up rounded-3xl border border-border bg-card-imperial p-8 shadow-card">
-        <div className="flex justify-center">
-          <Logo />
-        </div>
-        <h1 className="mt-6 text-center text-3xl font-semibold">
-          {mode === "signin" ? "Entrar na sua conta" : mode === "signup" ? "Criar conta gratuita" : "Recuperar senha"}
-        </h1>
+        <div className="flex justify-center"><Logo /></div>
+        <h1 className="mt-6 text-center text-3xl font-semibold">Entrar na sua conta</h1>
         <p className="mt-2 text-center text-sm text-muted-foreground">
-          {mode === "forgot"
-            ? "Enviaremos um link para você criar uma nova senha."
-            : "Salve seu progresso e continue de qualquer aparelho."}
+          Salve seu progresso e continue de qualquer aparelho.
         </p>
 
-        {notice ? (
-          <p className="mt-6 rounded-lg border border-primary/30 bg-accent p-3 text-sm">{notice}</p>
-        ) : null}
-
-        {mode !== "forgot" ? (
-          <div className="mt-6 space-y-3">
-            <Button type="button" variant="google" className="h-11 w-full" onClick={() => social("google")}>
-              <GoogleLogo /> Continuar com Google
-            </Button>
-            <Button type="button" variant="outline" className="h-11 w-full" onClick={() => social("lovable")}>
-              <LovableMark /> Continuar com Lovable
-            </Button>
-            <div className="flex items-center gap-3 py-2 text-xs text-muted-foreground">
-              <span className="h-px flex-1 bg-border" /> ou com e-mail <span className="h-px flex-1 bg-border" />
-            </div>
-          </div>
-        ) : null}
-
-        <form onSubmit={handleSubmit} className="mt-4 space-y-4">
-          {mode === "signup" ? (
-            <div className="space-y-1.5">
-              <Label htmlFor="name">Seu nome</Label>
-              <Input id="name" value={name} onChange={(e) => setName(e.target.value)} required className="h-11 bg-surface" />
-            </div>
-          ) : null}
-          <div className="space-y-1.5">
-            <Label htmlFor="email">E-mail</Label>
-            <Input id="email" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="h-11 bg-surface" />
-          </div>
-          {mode !== "forgot" ? (
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password">Senha</Label>
-                {mode === "signin" ? (
-                  <button type="button" className="text-xs text-primary hover:underline" onClick={() => setMode("forgot")}>
-                    Esqueci a senha
-                  </button>
-                ) : null}
-              </div>
-              <Input
-                id="password"
-                type="password"
-                autoComplete={mode === "signup" ? "new-password" : "current-password"}
-                minLength={6}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="h-11 bg-surface"
-              />
-            </div>
-          ) : null}
-          <Button type="submit" variant="hero" className="h-11 w-full" disabled={busy}>
-            {busy ? "Aguarde..." : mode === "signin" ? "Entrar" : mode === "signup" ? "Criar conta" : "Enviar link"}
+        <div className="mt-6 space-y-3">
+          <Button type="button" variant="google" className="h-11 w-full" disabled={busy !== null} onClick={() => social("google")}> 
+            <GoogleLogo /> {busy === "google" ? "Conectando..." : "Continuar com Google"}
           </Button>
-        </form>
+          <Button type="button" variant="outline" className="h-11 w-full" disabled={busy !== null} onClick={() => social("apple")}> 
+            <AppleLogo /> {busy === "apple" ? "Conectando..." : "Continuar com Apple"}
+          </Button>
+        </div>
 
         <p className="mt-6 text-center text-sm text-muted-foreground">
-          {mode === "signin" ? (
-            <>
-              Ainda não tem conta?{" "}
-              <button type="button" className="text-primary hover:underline" onClick={() => setMode("signup")}>
-                Criar conta
-              </button>
-            </>
-          ) : (
-            <>
-              Já tem conta?{" "}
-              <button type="button" className="text-primary hover:underline" onClick={() => setMode("signin")}>
-                Entrar
-              </button>
-            </>
-          )}
+          Ao continuar, você cria ou acessa sua conta usando o provedor escolhido.
         </p>
         <p className="mt-4 text-center">
-          <Link to="/" className="text-xs text-muted-foreground hover:text-foreground">
-            Voltar ao início
-          </Link>
+          <Link to="/" className="text-xs text-muted-foreground hover:text-foreground">Voltar ao início</Link>
         </p>
       </div>
     </div>
