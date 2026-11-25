@@ -1,11 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Award, CheckCircle2, ClipboardCheck } from "lucide-react";
+import { ArrowRight, Award, CheckCircle2, ClipboardCheck, History } from "lucide-react";
 import { LoginPrompt } from "@/components/site/login-prompt";
 import { ModuleBadge } from "@/components/site/module-icon";
 import { PageHero } from "@/components/site/page-hero";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { displayName, useAuth } from "@/hooks/use-auth";
+import { defaultModules, displayName } from "@/content";
+import { useAuth } from "@/hooks/use-auth";
+import { useRecentLearningActivity } from "@/hooks/use-learning-activity";
 import { useCompletedLessons, useQuizResults } from "@/hooks/use-progress";
 import { contentQuery, useSiteContent } from "@/lib/content-query";
 import { isPassing, moduleProgress, nextLesson, overallProgress } from "@/lib/progress";
@@ -31,6 +33,7 @@ function ProgressPage() {
   const { modules } = useSiteContent();
   const { data: completed } = useCompletedLessons();
   const { data: quiz } = useQuizResults();
+  const { data: activity, isLoading: activityLoading, isError: activityError } = useRecentLearningActivity();
   const done = completed ?? new Set<string>();
   const overall = overallProgress(modules, done);
   const upNext = nextLesson(modules, done);
@@ -38,6 +41,16 @@ function ProgressPage() {
     const q = quiz?.get(m.id);
     return q && isPassing(q.best_score, q.total);
   }).length;
+
+  function lessonTitle(moduleId: string, lessonId: string) {
+    const module = modules.find((item) => item.id === moduleId) ?? defaultModules.find((item) => item.id === moduleId);
+    return module?.lessons.find((item) => item.id === lessonId)?.title ?? lessonId;
+  }
+
+  function moduleTitle(moduleId: string) {
+    return modules.find((item) => item.id === moduleId)?.title ??
+      defaultModules.find((item) => item.id === moduleId)?.title ?? moduleId;
+  }
 
   return (
     <>
@@ -72,18 +85,12 @@ function ProgressPage() {
               </div>
               <div className="rounded-2xl border border-border bg-card-imperial p-6 shadow-card">
                 <CheckCircle2 className="h-6 w-6 text-primary" />
-                <p className="mt-3 text-4xl font-semibold">
-                  {overall.done}
-                  <span className="text-xl text-muted-foreground">/{overall.total}</span>
-                </p>
+                <p className="mt-3 text-4xl font-semibold">{overall.done}<span className="text-xl text-muted-foreground">/{overall.total}</span></p>
                 <p className="text-sm text-muted-foreground">aulas concluídas</p>
               </div>
               <div className="rounded-2xl border border-border bg-card-imperial p-6 shadow-card">
                 <Award className="h-6 w-6 text-primary" />
-                <p className="mt-3 text-4xl font-semibold">
-                  {passed}
-                  <span className="text-xl text-muted-foreground">/{modules.length}</span>
-                </p>
+                <p className="mt-3 text-4xl font-semibold">{passed}<span className="text-xl text-muted-foreground">/{modules.length}</span></p>
                 <p className="text-sm text-muted-foreground">questionários aprovados</p>
               </div>
             </div>
@@ -93,15 +100,10 @@ function ProgressPage() {
                 <div className="flex-1">
                   <p className="eyebrow">Continue de onde parou</p>
                   <p className="mt-2 text-2xl font-semibold">{upNext.lesson.title}</p>
-                  <p className="text-sm text-muted-foreground">
-                    Módulo {upNext.module.number}: {upNext.module.title}
-                  </p>
+                  <p className="text-sm text-muted-foreground">Módulo {upNext.module.number}: {upNext.module.title}</p>
                 </div>
                 <Button asChild variant="hero">
-                  <Link
-                    to="/cursos/$moduloId/aula/$aulaId"
-                    params={{ moduloId: upNext.module.id, aulaId: upNext.lesson.id }}
-                  >
+                  <Link to="/cursos/$moduloId/aula/$aulaId" params={{ moduloId: upNext.module.id, aulaId: upNext.lesson.id }}>
                     Continuar <ArrowRight />
                   </Link>
                 </Button>
@@ -112,30 +114,54 @@ function ProgressPage() {
               </div>
             )}
 
+            <section className="mt-10 rounded-2xl border border-border bg-card-imperial p-6 shadow-card" aria-labelledby="activity-heading">
+              <div className="flex items-center gap-3">
+                <History className="h-5 w-5 text-primary" />
+                <div>
+                  <p className="eyebrow">Aprendizagem</p>
+                  <h2 id="activity-heading" className="text-2xl font-semibold">Atividade recente</h2>
+                </div>
+              </div>
+              {activityLoading ? (
+                <p className="mt-5 text-sm text-muted-foreground">Carregando atividades...</p>
+              ) : activityError ? (
+                <p role="status" className="mt-5 text-sm text-muted-foreground">Não foi possível carregar o histórico agora.</p>
+              ) : activity?.length ? (
+                <ol className="mt-5 divide-y divide-border">
+                  {activity.map((item, index) => {
+                    const quizItem = item.kind === "quiz";
+                    const title = quizItem ? `Questionário: ${moduleTitle(item.module_id)}` : lessonTitle(item.module_id, item.lesson_id);
+                    return (
+                      <li key={`${item.kind}-${item.module_id}-${"lesson_id" in item ? item.lesson_id : item.occurred_at}-${index}`} className="flex flex-col gap-1 py-3 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                          <p className="font-medium">{title}</p>
+                          <p className="text-sm text-muted-foreground">{quizItem ? `Nota ${item.best_score}/${item.total}` : `Aula concluída · ${moduleTitle(item.module_id)}`}</p>
+                        </div>
+                        <time className="text-xs text-muted-foreground" dateTime={item.occurred_at}>
+                          {new Date(item.occurred_at).toLocaleString()}
+                        </time>
+                      </li>
+                    );
+                  })}
+                </ol>
+              ) : (
+                <p className="mt-5 text-sm text-muted-foreground">Suas aulas concluídas e questionários aparecerão aqui.</p>
+              )}
+            </section>
+
             <h2 className="mt-12 text-3xl font-semibold">Por módulo</h2>
             <div className="mt-5 space-y-3">
               {modules.map((m) => {
                 const p = moduleProgress(m, done);
                 const q = quiz?.get(m.id);
                 return (
-                  <Link
-                    key={m.id}
-                    to="/cursos/$moduloId"
-                    params={{ moduloId: m.id }}
-                    className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-5 transition-colors hover:border-primary/50 sm:flex-row sm:items-center"
-                  >
+                  <Link key={m.id} to="/cursos/$moduloId" params={{ moduloId: m.id }} className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-5 transition-colors hover:border-primary/50 sm:flex-row sm:items-center">
                     <ModuleBadge name={m.icon} number={m.number} />
                     <div className="flex-1">
                       <p className="font-semibold">{m.title}</p>
-                      <div className="mt-2 flex items-center gap-3">
-                        <Progress value={p.percent} className="flex-1" />
-                        <span className="w-10 text-right font-mono text-xs text-primary">{p.percent}%</span>
-                      </div>
+                      <div className="mt-2 flex items-center gap-3"><Progress value={p.percent} className="flex-1" /><span className="w-10 text-right font-mono text-xs text-primary">{p.percent}%</span></div>
                     </div>
-                    <span className="flex items-center gap-1.5 text-sm text-muted-foreground sm:w-36 sm:justify-end">
-                      <ClipboardCheck className="h-4 w-4 text-primary" />
-                      {q ? `Quiz ${q.best_score}/${q.total}` : "Quiz pendente"}
-                    </span>
+                    <span className="flex items-center gap-1.5 text-sm text-muted-foreground sm:w-36 sm:justify-end"><ClipboardCheck className="h-4 w-4 text-primary" />{q ? `Quiz ${q.best_score}/${q.total}` : "Quiz pendente"}</span>
                   </Link>
                 );
               })}
