@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { Logo } from "@/components/site/logo";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
-import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable/index";
 
 const REDIRECT_KEY = "imperio:after-login";
 const isEnglish = typeof navigator !== "undefined" && navigator.language.toLowerCase().startsWith("en");
@@ -86,13 +86,12 @@ function AuthPage() {
   async function social() {
     setBusy(true);
     try {
-      const { error: authError } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: new URL("/auth", window.location.origin).toString(),
-          queryParams: { prompt: "select_account" },
-        },
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: window.location.origin + "/auth",
+        extraParams: { prompt: "select_account" },
       });
+      if (result.redirected) return;
+      const authError = result.error;
       if (authError) throw authError;
     } catch (authError) {
       const message =
