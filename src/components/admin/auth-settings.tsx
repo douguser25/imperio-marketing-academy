@@ -2,13 +2,12 @@ import { CheckCircle2, CircleHelp, Copy, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
 
 const isEnglish = typeof navigator !== "undefined" && navigator.language.toLowerCase().startsWith("en");
 
 export function AuthSettings() {
   const [copied, setCopied] = useState(false);
-  const projectUrl = supabase.supabaseUrl.replace(/\/+$/, "");
+  const projectUrl = String(import.meta.env["VITE_SUPABASE_URL"] ?? "").replace(/\/+$/, "");
   const providerCallback = `${projectUrl}/auth/v1/callback`;
   const appRedirect = typeof window === "undefined" ? "/auth" : new URL("/auth", window.location.origin).toString();
 
