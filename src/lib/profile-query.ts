@@ -1,6 +1,7 @@
 import { queryOptions } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { defaultPreferences } from "@/lib/preferences";
+import { normalizeLocale } from "@/lib/locale";
 
 export interface Profile {
   display_name: string | null;
@@ -8,19 +9,22 @@ export interface Profile {
   theme: string;
   primary_color: string;
   accent_color: string;
+  locale: string;
 }
 
-/** The signed-in user's own profile row (RLS limits it to their row); defaults when none exists yet. */
+/** Read only the signed-in user's row; RLS enforces ownership in the database. */
 export const profileQuery = (userId: string) =>
   queryOptions({
     queryKey: ["profile", userId],
     queryFn: async (): Promise<Profile> => {
       const { data, error } = await supabase
         .from("profiles")
-        .select("display_name, avatar_path, theme, primary_color, accent_color")
+        .select("display_name, avatar_path, theme, primary_color, accent_color, locale")
         .eq("id", userId)
         .maybeSingle();
       if (error) throw error;
-      return data ?? { display_name: null, avatar_path: null, ...defaultPreferences };
+      return data
+        ? { ...data, locale: normalizeLocale(data.locale) }
+        : { display_name: null, avatar_path: null, ...defaultPreferences, locale: "pt-BR" };
     },
   });
