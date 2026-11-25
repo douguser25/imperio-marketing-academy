@@ -17,6 +17,7 @@ import { Route as GlossarioRouteImport } from './routes/glossario'
 import { Route as ProgressoRouteImport } from './routes/progresso'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedConfiguracoesRouteImport } from './routes/_authenticated/configuracoes'
 import { Route as CategoriasSubcategoriaIdRouteImport } from './routes/categorias.$subcategoriaId'
 import { Route as CursosIndexRouteImport } from './routes/cursos.index'
 import { Route as CursosModuloIdIndexRouteImport } from './routes/cursos.$moduloId.index'
@@ -62,6 +63,12 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedConfiguracoesRoute =
+  AuthenticatedConfiguracoesRouteImport.update({
+    id: '/configuracoes',
+    path: '/configuracoes',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const CategoriasSubcategoriaIdRoute =
   CategoriasSubcategoriaIdRouteImport.update({
     id: '/categorias/$subcategoriaId',
@@ -98,6 +105,7 @@ export interface FileRoutesByFullPath {
   '/progresso': typeof ProgressoRoute
   '/reset-password': typeof ResetPasswordRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/configuracoes': typeof AuthenticatedConfiguracoesRoute
   '/categorias/$subcategoriaId': typeof CategoriasSubcategoriaIdRoute
   '/cursos/': typeof CursosIndexRoute
   '/cursos/$moduloId/quiz': typeof CursosModuloIdQuizRoute
@@ -112,6 +120,7 @@ export interface FileRoutesByTo {
   '/progresso': typeof ProgressoRoute
   '/reset-password': typeof ResetPasswordRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/configuracoes': typeof AuthenticatedConfiguracoesRoute
   '/categorias/$subcategoriaId': typeof CategoriasSubcategoriaIdRoute
   '/cursos': typeof CursosIndexRoute
   '/cursos/$moduloId/quiz': typeof CursosModuloIdQuizRoute
@@ -128,6 +137,7 @@ export interface FileRoutesById {
   '/progresso': typeof ProgressoRoute
   '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/configuracoes': typeof AuthenticatedConfiguracoesRoute
   '/categorias/$subcategoriaId': typeof CategoriasSubcategoriaIdRoute
   '/cursos/': typeof CursosIndexRoute
   '/cursos/$moduloId/quiz': typeof CursosModuloIdQuizRoute
@@ -144,6 +154,7 @@ export interface FileRouteTypes {
     | '/progresso'
     | '/reset-password'
     | '/admin'
+    | '/configuracoes'
     | '/categorias/$subcategoriaId'
     | '/cursos/'
     | '/cursos/$moduloId/quiz'
@@ -158,6 +169,7 @@ export interface FileRouteTypes {
     | '/progresso'
     | '/reset-password'
     | '/admin'
+    | '/configuracoes'
     | '/categorias/$subcategoriaId'
     | '/cursos'
     | '/cursos/$moduloId/quiz'
@@ -173,6 +185,7 @@ export interface FileRouteTypes {
     | '/progresso'
     | '/reset-password'
     | '/_authenticated/admin'
+    | '/_authenticated/configuracoes'
     | '/categorias/$subcategoriaId'
     | '/cursos/'
     | '/cursos/$moduloId/quiz'
@@ -253,6 +266,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/configuracoes': {
+      id: '/_authenticated/configuracoes'
+      path: '/configuracoes'
+      fullPath: '/configuracoes'
+      preLoaderRoute: typeof AuthenticatedConfiguracoesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/categorias/$subcategoriaId': {
       id: '/categorias/$subcategoriaId'
       path: '/categorias/$subcategoriaId'
@@ -293,10 +313,12 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedConfiguracoesRoute: typeof AuthenticatedConfiguracoesRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedConfiguracoesRoute: AuthenticatedConfiguracoesRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { LogOut, Menu, UserRound } from "lucide-react";
+import { LogOut, Menu, Settings, UserRound } from "lucide-react";
 import { useState } from "react";
 import { CategoryMenu } from "./category-menu";
 import { Logo } from "./logo";
@@ -56,10 +56,11 @@ export function SiteHeader() {
         <div className="hidden items-center gap-2 lg:flex">
           {loading ? null : user ? (
             <>
-              <span className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Link to="/configuracoes" className="flex items-center gap-2 rounded-md px-2 py-1 text-sm text-muted-foreground transition-colors hover:text-foreground data-[status=active]:text-primary" aria-label="Configurações">
                 <UserRound className="h-4 w-4 text-primary" />
                 {displayName(user)}
-              </span>
+                <Settings className="h-4 w-4" />
+              </Link>
               <Button variant="ghost" size="sm" onClick={signOut}>
                 <LogOut /> Sair
               </Button>
@@ -115,6 +116,11 @@ export function SiteHeader() {
                   <p className="text-sm text-muted-foreground">
                     Olá, <span className="text-foreground">{displayName(user)}</span>
                   </p>
+                  <Button asChild variant="imperial" className="w-full">
+                    <Link to="/configuracoes" onClick={() => setOpen(false)}>
+                      <Settings /> Configurações
+                    </Link>
+                  </Button>
                   <Button variant="imperial" className="w-full" onClick={signOut}>
                     <LogOut /> Sair
                   </Button>

@@ -17,6 +17,8 @@ import { SiteFooter } from "@/components/site/site-footer";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/hooks/use-auth";
 import { contentQuery } from "@/lib/content-query";
+import { preferencesBootScript } from "@/lib/preferences";
+import { PreferencesSync } from "@/components/site/preferences-sync";
 
 function NotFoundComponent() {
   return (
@@ -123,8 +125,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="pt-BR" className="dark">
+    <html lang="pt-BR" className="dark" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: preferencesBootScript }} />
         <HeadContent />
       </head>
       <body>
@@ -141,6 +144,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
+        <PreferencesSync />
         <div className="flex min-h-screen flex-col">
           <SiteHeader />
           <main className="flex-1">

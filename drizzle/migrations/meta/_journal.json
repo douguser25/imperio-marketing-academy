@@ -43,6 +43,13 @@
       "when": 1795479481641,
       "tag": "0005_retire_deletion_requests",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1795607738996,
+      "tag": "0006_profile_theme_system",
+      "breakpoints": true
     }
   ]
 }

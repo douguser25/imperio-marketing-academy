@@ -1,6 +1,18 @@
 /** Per-user look of the site: theme plus main and highlight colors (Configurações). */
 
-export type Theme = "dark" | "light";
+export type Theme = "dark" | "light" | "system";
+export type ResolvedTheme = "dark" | "light";
+
+/** "system" follows the device; anything unknown falls back to dark. */
+export function resolveTheme(theme: string, prefersDark: boolean): ResolvedTheme {
+  if (theme === "light") return "light";
+  if (theme === "system") return prefersDark ? "dark" : "light";
+  return "dark";
+}
+
+function deviceDark() {
+  return typeof window === "undefined" || !window.matchMedia ? true : window.matchMedia("(prefers-color-scheme: dark)").matches;
+}
 
 export interface Preferences {
   theme: Theme;
@@ -49,8 +61,7 @@ function pick(list: Swatch[], id: string) {
 }
 
 /** CSS variables for a set of preferences. Unknown color ids fall back to the gold defaults. */
-export function themeVars(prefs: Preferences): Record<string, string> {
-  const theme: Theme = prefs.theme === "light" ? "light" : "dark";
+export function themeVars(prefs: Preferences, theme: ResolvedTheme = resolveTheme(prefs.theme, true)): Record<string, string> {
   const [primary, deep] = pick(primaryPalettes, prefs.primary_color)[theme];
   const [glow] = pick(accentPalettes, prefs.accent_color)[theme];
   return { "--primary": primary!, "--primary-deep": deep!, "--primary-glow": glow! };
@@ -59,13 +70,16 @@ export function themeVars(prefs: Preferences): Record<string, string> {
 /** Browser only: applies the preferences to the page and remembers them for the next visit. */
 export function applyPreferences(prefs: Preferences) {
   const root = document.documentElement;
-  const theme: Theme = prefs.theme === "light" ? "light" : "dark";
-  const vars = themeVars(prefs);
+  const theme = resolveTheme(prefs.theme, deviceDark());
+  const vars = themeVars(prefs, theme);
   root.classList.remove("dark", "light");
   root.classList.add(theme);
   for (const [k, v] of Object.entries(vars)) root.style.setProperty(k, v);
   try {
-    localStorage.setItem(CACHE_KEY, JSON.stringify({ theme, vars }));
+    localStorage.setItem(
+      CACHE_KEY,
+      JSON.stringify({ theme: prefs.theme, dark: themeVars(prefs, "dark"), light: themeVars(prefs, "light") }),
+    );
   } catch {
     // storage unavailable (private mode): the look still applies for this visit
   }
@@ -85,4 +99,4 @@ export function resetPreferences() {
 }
 
 /** Inline script for <head>: re-applies the remembered look before the first paint. */
-export const preferencesBootScript = `(function(){try{var p=JSON.parse(localStorage.getItem("${CACHE_KEY}")||"null");if(!p)return;var d=document.documentElement;d.classList.remove("dark","light");d.classList.add(p.theme==="light"?"light":"dark");for(var k in p.vars){d.style.setProperty(k,p.vars[k])}}catch(e){}})();`;
+export const preferencesBootScript = `(function(){try{var p=JSON.parse(localStorage.getItem("${CACHE_KEY}")||"null");if(!p||!p.dark)return;var t=p.theme==="light"?"light":p.theme==="system"?(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"):"dark";var d=document.documentElement;d.classList.remove("dark","light");d.classList.add(t);var v=p[t];for(var k in v){d.style.setProperty(k,v[k])}}catch(e){}})();`;
