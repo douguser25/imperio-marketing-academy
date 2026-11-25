@@ -14,6 +14,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteHeader } from "@/components/site/site-header";
 import { SiteFooter } from "@/components/site/site-footer";
+import { AiChat } from "@/components/site/ai-chat";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/hooks/use-auth";
 import { contentQuery } from "@/lib/content-query";
@@ -153,6 +154,7 @@ function RootComponent() {
           </main>
           <SiteFooter />
         </div>
+        <AiChat />
         <Toaster position="top-center" />
       </AuthProvider>
     </QueryClientProvider>
