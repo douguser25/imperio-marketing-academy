@@ -4,7 +4,19 @@ import { routeTree } from "./routeTree.gen";
 
 export const getRouter = () => {
   // One client per request: a module-level QueryClient leaks cached data between SSR requests.
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        // Reuse recent data while navigating instead of refetching every page transition.
+        staleTime: 30_000,
+        gcTime: 5 * 60_000,
+        retry: 1,
+        refetchOnWindowFocus: true,
+      },
+      // Do not replay potentially non-idempotent writes automatically.
+      mutations: { retry: 0 },
+    },
+  });
 
   const router = createRouter({
     routeTree,

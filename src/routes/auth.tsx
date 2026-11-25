@@ -5,24 +5,14 @@ import { Logo } from "@/components/site/logo";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
+import { safeInternalRedirect } from "@/lib/auth-redirect";
 
 const REDIRECT_KEY = "imperio:after-login";
 const isEnglish = typeof navigator !== "undefined" && navigator.language.toLowerCase().startsWith("en");
 
-function safePath(value: unknown): string | undefined {
-  return typeof value === "string" && value.startsWith("/") && !value.startsWith("//")
-    ? value
-    : undefined;
-}
-
 export const Route = createFileRoute("/auth")({
-  validateSearch: (search: Record<string, unknown>): {
-    redirect?: string | undefined;
-    error?: string | undefined;
-    error_description?: string | undefined;
-    error_code?: string | undefined;
-  } => ({
-    redirect: safePath(search["redirect"]),
+  validateSearch: (search: Record<string, unknown>) => ({
+    redirect: safeInternalRedirect(search["redirect"]),
     error: typeof search["error"] === "string" ? search["error"] : undefined,
     error_description:
       typeof search["error_description"] === "string" ? search["error_description"] : undefined,
@@ -63,7 +53,8 @@ function AuthPage() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    if (redirect) sessionStorage.setItem(REDIRECT_KEY, redirect);
+    const safeRedirect = safeInternalRedirect(redirect);
+    if (safeRedirect) sessionStorage.setItem(REDIRECT_KEY, safeRedirect);
   }, [redirect]);
 
   useEffect(() => {
@@ -84,7 +75,7 @@ function AuthPage() {
 
   useEffect(() => {
     if (!loading && user) {
-      const target = safePath(sessionStorage.getItem(REDIRECT_KEY)) ?? "/progresso";
+      const target = safeInternalRedirect(sessionStorage.getItem(REDIRECT_KEY)) ?? "/progresso";
       sessionStorage.removeItem(REDIRECT_KEY);
       navigate({ to: target, replace: true });
     }
