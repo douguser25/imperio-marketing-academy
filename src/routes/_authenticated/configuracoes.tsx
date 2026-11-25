@@ -120,7 +120,7 @@ function SettingsContent({ userId }: { userId: string }) {
 
   async function saveProfile() {
     const err = validateDisplayName(name);
-    if (err) return toast.error(en ? "Enter a name of up to 60 characters." : err);
+    if (err) { toast.error(en ? "Enter a name of up to 60 characters." : err); return; }
     setSaving("profile");
     try {
       let avatar_path = profile?.avatar_path ?? null;
@@ -161,11 +161,11 @@ function SettingsContent({ userId }: { userId: string }) {
 
   async function changePassword() {
     const err = validateNewPassword(pw.next, pw.confirm, pw.current);
-    if (err) return toast.error(en ? "Check the new password: at least 6 characters, matching, and different from the current one." : err);
+    if (err) { toast.error(en ? "Check the new password: at least 6 characters, matching, and different from the current one." : err); return; }
     setSaving("pw");
     const { error } = await supabase.auth.updateUser({ password: pw.next, current_password: pw.current } as never);
     setSaving(null);
-    if (error) return toast.error(t("Não foi possível trocar a senha. Confira a senha atual.", "Could not change the password. Check your current password."));
+    if (error) { toast.error(t("Não foi possível trocar a senha. Confira a senha atual.", "Could not change the password. Check your current password.")); return; }
     setPw({ current: "", next: "", confirm: "" });
     toast.success(t("Senha alterada.", "Password changed."));
   }
@@ -196,7 +196,7 @@ function SettingsContent({ userId }: { userId: string }) {
   function pickFile(f: File | undefined) {
     if (!f) return;
     const err = validateAvatar(f);
-    if (err) return toast.error(en ? "Use a JPG, PNG or WEBP image up to 2 MB." : err);
+    if (err) { toast.error(en ? "Use a JPG, PNG or WEBP image up to 2 MB." : err); return; }
     setFile(f);
     setPreview(URL.createObjectURL(f));
   }
