@@ -9,6 +9,7 @@
     { "idx": 4, "version": "7", "when": 1795479458550, "tag": "0004_user_settings", "breakpoints": true },
     { "idx": 5, "version": "7", "when": 1795479481641, "tag": "0005_retire_deletion_requests", "breakpoints": true },
     { "idx": 6, "version": "7", "when": 1795607738996, "tag": "0006_profile_theme_system", "breakpoints": true },
-    { "idx": 7, "version": "7", "when": 1795622400000, "tag": "0007_profile_locale_storage", "breakpoints": true }
+    { "idx": 7, "version": "7", "when": 1795622400000, "tag": "0007_profile_locale_storage", "breakpoints": true },
+    { "idx": 8, "version": "7", "when": 1795626000000, "tag": "0008_owner_authorization", "breakpoints": true }
   ]
 }
