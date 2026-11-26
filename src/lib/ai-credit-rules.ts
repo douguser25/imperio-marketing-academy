@@ -1,6 +1,7 @@
 /** Arithmetic only: callers must use database time and persist results atomically. */
 export const AI_MESSAGE_CREDIT_COST = 1;
 export const AI_INITIAL_CREDITS = 20;
+export const AI_REFILL_CREDITS = 20;
 export const AI_RENEWAL_INTERVAL_MS = 20 * 60 * 60 * 1000;
 
 export interface AiCreditState {
@@ -8,7 +9,7 @@ export interface AiCreditState {
   renewedAt: number;
 }
 
-export function renewAiCredits(state: AiCreditState, now: number, refillAmount: number): AiCreditState {
+export function renewAiCredits(state: AiCreditState, now: number, refillAmount = AI_REFILL_CREDITS): AiCreditState {
   if (!Number.isSafeInteger(state.balance) || state.balance < 0 ||
       !Number.isSafeInteger(refillAmount) || refillAmount < 0 ||
       !Number.isSafeInteger(state.renewedAt) || !Number.isSafeInteger(now)) {

@@ -1,9 +1,9 @@
 # Roadmap — IMPÉRIO DIGITAL
 
-- [ ] Créditos de IA vinculados à conta, com saldo inicial de 20 créditos, custo de 1 crédito por mensagem e renovação a cada 20 horas preservando o saldo anterior — aguarda quantidade de recarga
-- [ ] Histórico de várias conversas vinculado à conta — implementação integrada depende da definição dos créditos
+- [ ] Créditos de IA vinculados à conta: 20 iniciais, custo de 1 por mensagem, recarga de exatamente 20 a cada 20 horas sem apagar o saldo
+- [ ] Histórico de várias conversas vinculado à conta, com URLs próprias e respostas reais da IA
 - [x] Cálculo testado de renovação acumulativa, saldo inicial e custo por mensagem
-- [ ] Verificar créditos e histórico com login real, recarga, atualização da página e novo login — depende das definições acima
+- [ ] Verificar créditos e histórico com login real, recarga, atualização da página, novo login e requisições simultâneas
 - [x] Corrigir erro existente que impede abrir a página de progresso
 - [x] Corrigir tipos dos links de login sem mudar o fluxo OAuth e concluir o campo de idioma já previsto no perfil
 
