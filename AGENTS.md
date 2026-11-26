@@ -28,3 +28,5 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+- Keep AI credit arithmetic in a browser-safe pure rules module with explicit refill quantities; durable balance enforcement must happen atomically in the database, never from browser state, to prevent reload and concurrency bypasses.

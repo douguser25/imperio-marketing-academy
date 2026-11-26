@@ -35,6 +35,33 @@ export type Database = {
         }
         Relationships: []
       }
+      admin_activity: {
+        Row: {
+          action: string
+          actor_id: string
+          created_at: string
+          details: Json
+          id: number
+          target_user_id: string | null
+        }
+        Insert: {
+          action: string
+          actor_id: string
+          created_at?: string
+          details?: Json
+          id?: number
+          target_user_id?: string | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string
+          created_at?: string
+          details?: Json
+          id?: number
+          target_user_id?: string | null
+        }
+        Relationships: []
+      }
       content_drafts: {
         Row: {
           data: Json
@@ -107,6 +134,21 @@ export type Database = {
         }
         Relationships: []
       }
+      owner_accounts: {
+        Row: {
+          created_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       owner_emails: {
         Row: {
           email: string
@@ -126,6 +168,7 @@ export type Database = {
           created_at: string
           display_name: string | null
           id: string
+          locale: string
           primary_color: string
           theme: string
           updated_at: string
@@ -136,6 +179,7 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id: string
+          locale?: string
           primary_color?: string
           theme?: string
           updated_at?: string
@@ -146,6 +190,7 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id?: string
+          locale?: string
           primary_color?: string
           theme?: string
           updated_at?: string
@@ -209,6 +254,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_owner: { Args: never; Returns: boolean }
       list_my_sessions: {
         Args: never
         Returns: {
@@ -220,7 +266,20 @@ export type Database = {
           user_agent: string
         }[]
       }
+      owner_dashboard_stats: {
+        Args: never
+        Returns: {
+          published_modules: number
+          recent_admin_actions: number
+          total_admins: number
+          total_users: number
+        }[]
+      }
       publish_content: { Args: never; Returns: number }
+      set_admin_role: {
+        Args: { _enabled: boolean; _target_user_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "admin" | "user"
