@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { Logo } from "@/components/site/logo";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
-import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable";
 import { safeInternalRedirect } from "@/lib/auth-redirect";
 
 const REDIRECT_KEY = "imperio:after-login";
@@ -89,14 +89,13 @@ function AuthPage() {
   async function social() {
     setBusy(true);
     try {
-      const { error: authError } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: new URL("/auth", window.location.origin).toString(),
-          queryParams: { prompt: "select_account" },
-        },
+      // Lovable Cloud projects configured with custom OAuth credentials must use
+      // its OAuth broker, which returns a Supabase session to this application.
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: new URL("/auth", window.location.origin).toString(),
+        extraParams: { prompt: "select_account" },
       });
-      if (authError) throw authError;
+      if ("error" in result && result.error) throw result.error;
     } catch (authError) {
       const message =
         authError instanceof Error
