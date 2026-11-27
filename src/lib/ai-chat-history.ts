@@ -35,13 +35,13 @@ export function createAiConversation(intro: string): AiConversation {
 function isMessage(value: unknown): value is AiChatMessage {
   if (!value || typeof value !== "object") return false;
   const item = value as Record<string, unknown>;
-  return typeof item.id === "string" && (item.role === "user" || item.role === "assistant") && typeof item.content === "string" && typeof item.createdAt === "string";
+  return typeof item["id"] === "string" && (item["role"] === "user" || item["role"] === "assistant") && typeof item["content"] === "string" && typeof item["createdAt"] === "string";
 }
 
 function isConversation(value: unknown): value is AiConversation {
   if (!value || typeof value !== "object") return false;
   const item = value as Record<string, unknown>;
-  return typeof item.id === "string" && typeof item.title === "string" && typeof item.updatedAt === "string" && Array.isArray(item.messages) && item.messages.every(isMessage);
+  return typeof item["id"] === "string" && typeof item["title"] === "string" && typeof item["updatedAt"] === "string" && Array.isArray(item["messages"]) && (item["messages"] as unknown[]).every(isMessage);
 }
 
 export function loadAiConversations(): AiConversation[] {

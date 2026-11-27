@@ -44,11 +44,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // profiles.display_name is the canonical persisted name. RLS restricts this
     // query to the signed-in user's own profile; OAuth metadata is only a fallback.
-    void supabase
-      .from("profiles")
-      .select("display_name")
-      .eq("id", userId)
-      .maybeSingle()
+    void Promise.resolve(
+      supabase.from("profiles").select("display_name").eq("id", userId).maybeSingle(),
+    )
       .then(({ data, error }) => {
         if (error) {
           console.error("[Profile] Unable to load the saved display name:", error.message);

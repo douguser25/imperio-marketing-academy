@@ -23,7 +23,7 @@ describe("displayName", () => {
   });
 
   it("falls back to the email name when auth metadata has no usable name", () => {
-    expect(displayName(user({ full_name: "  " }, "samuel@example.com")).toBe("samuel");
+    expect(displayName(user({ full_name: "  " }, "samuel@example.com"))).toBe("samuel");
   });
 
   it("returns an empty string when there is no signed-in user", () => {

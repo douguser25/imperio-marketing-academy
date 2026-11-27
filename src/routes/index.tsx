@@ -6,9 +6,12 @@ import {
   GraduationCap,
   ListChecks,
   ShieldCheck,
+  Sparkles,
+  Smartphone,
+  Gift,
   TrendingUp,
 } from "lucide-react";
-import heroImage from "@/assets/hero-imperio.jpg";
+import heroImage from "@/assets/hero-imperio.webp";
 import { Button } from "@/components/ui/button";
 import { ModuleBadge } from "@/components/site/module-icon";
 import { courseStats } from "@/content";
@@ -60,6 +63,13 @@ const features = [
   },
 ];
 
+const highlights = [
+  { icon: Gift, title: "100% gratuito", body: "Estude sem pagar nada" },
+  { icon: BookOpenCheck, title: "Passo a passo", body: "Do zero ao avançado" },
+  { icon: ClipboardCheck, title: "Questionários", body: "Teste o que aprendeu" },
+  { icon: Smartphone, title: "Em qualquer lugar", body: "Celular ou computador" },
+];
+
 function Index() {
   const { user } = useAuth();
   const { modules, glossary, settings } = useSiteContent();
@@ -76,46 +86,71 @@ function Index() {
   return (
     <>
       {/* Hero */}
-      <section className="relative overflow-hidden border-b border-border">
+      <section className="relative isolate overflow-hidden border-b border-border">
         <img
           src={heroImage}
           alt=""
           aria-hidden="true"
-          className="absolute inset-0 h-full w-full object-cover object-[70%_center] opacity-70 md:opacity-100"
+          width={1672}
+          height={941}
+          fetchPriority="high"
+          decoding="async"
+          className="absolute inset-0 -z-10 h-full w-full object-cover object-[70%_center] opacity-60 md:opacity-100"
         />
-        <div className="absolute inset-0 bg-fade-left" />
-        <div className="absolute inset-x-0 bottom-0 h-40 bg-fade-bottom" />
-        <div className="relative mx-auto flex min-h-[78vh] max-w-6xl flex-col justify-center px-5 py-20">
-          <p className="eyebrow animate-fade-up">{settings.heroEyebrow}</p>
-          <h1 className="mt-5 max-w-3xl animate-fade-up text-5xl font-semibold leading-[1.02] md:text-7xl [animation-delay:80ms]">
+        <div className="absolute inset-0 -z-10 bg-fade-left" />
+        <div className="absolute inset-x-0 bottom-0 -z-10 h-48 bg-fade-bottom" />
+        <div className="mx-auto flex min-h-[calc(100svh-4rem)] max-w-6xl flex-col justify-center px-5 pb-10 pt-16 md:min-h-[82vh] md:pt-20">
+          <span className="inline-flex w-fit animate-fade-up items-center gap-2 rounded-full border border-primary/40 bg-background/50 px-4 py-1.5 text-xs font-medium text-primary backdrop-blur-md">
+            <Sparkles className="h-3.5 w-3.5" />
+            {settings.heroEyebrow}
+          </span>
+          <h1 className="mt-6 max-w-3xl animate-fade-up text-[2.6rem] font-semibold leading-[1.02] tracking-tight sm:text-6xl md:text-7xl [animation-delay:80ms]">
             {settings.heroTitle}{" "}
             <span className="text-gold animate-shimmer italic">{settings.heroHighlight}</span>
           </h1>
+          <div className="gold-rule mt-6 w-24 animate-fade-up [animation-delay:120ms]" />
           <p className="mt-6 max-w-xl animate-fade-up text-base leading-relaxed text-muted-foreground md:text-lg [animation-delay:160ms]">
             {settings.heroSubtitle}
           </p>
-          <div className="mt-9 flex animate-fade-up flex-wrap gap-3 [animation-delay:240ms]">
-            <Button asChild variant="hero" size="xl">
+          <div className="mt-9 grid animate-fade-up gap-3 sm:flex sm:flex-wrap [animation-delay:240ms]">
+            <Button asChild variant="hero" size="xl" className="rounded-full">
               <Link to="/cursos">
                 Começar a estudar <ArrowRight />
               </Link>
             </Button>
             {!user ? (
-              <Button asChild variant="imperial" size="xl">
+              <Button asChild variant="imperial" size="xl" className="rounded-full backdrop-blur-md">
                 <Link to="/auth" search={{ redirect: undefined }}>
                   Criar conta gratuita
                 </Link>
               </Button>
             ) : (
-              <Button asChild variant="imperial" size="xl">
+              <Button asChild variant="imperial" size="xl" className="rounded-full backdrop-blur-md">
                 <Link to="/progresso">Ver meu progresso</Link>
               </Button>
             )}
           </div>
           <p className="mt-6 flex animate-fade-up items-center gap-2 text-xs text-muted-foreground [animation-delay:320ms]">
-            <ShieldCheck className="h-4 w-4 text-primary" />
+            <ShieldCheck className="h-4 w-4 shrink-0 text-primary" />
             {settings.trustLine}
           </p>
+
+          <div className="mt-12 grid animate-fade-up grid-cols-2 gap-3 lg:grid-cols-4 [animation-delay:400ms]">
+            {highlights.map((h) => (
+              <div
+                key={h.title}
+                className="flex min-w-0 flex-col items-start gap-3 rounded-2xl border border-primary/25 bg-background/55 p-3 backdrop-blur-md transition-colors hover:border-primary/60 sm:flex-row sm:items-center sm:p-4"
+              >
+                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gold text-primary-foreground shadow-gold">
+                  <h.icon className="h-5 w-5" strokeWidth={1.8} />
+                </span>
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold sm:truncate">{h.title}</p>
+                  <p className="text-xs text-muted-foreground sm:truncate">{h.body}</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -125,9 +160,9 @@ function Index() {
           {stats.map((s, i) => (
             <div
               key={s.label}
-              className={`px-5 py-8 text-center ${i % 2 === 1 ? "border-l border-border" : ""} ${i >= 2 ? "border-t border-border md:border-t-0" : ""} ${i === 2 ? "md:border-l" : ""}`}
+              className={`px-5 py-8 text-center md:py-10 ${i % 2 === 1 ? "border-l border-border" : ""} ${i >= 2 ? "border-t border-border md:border-t-0" : ""} ${i === 2 ? "md:border-l" : ""}`}
             >
-              <p className="font-display text-gold text-5xl font-semibold">{s.value}</p>
+              <p className="font-display text-gold text-4xl font-semibold md:text-5xl">{s.value}</p>
               <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
                 {s.label}
               </p>
@@ -156,7 +191,7 @@ function Index() {
               key={m.id}
               to="/cursos/$moduloId"
               params={{ moduloId: m.id }}
-              className="group flex animate-fade-up flex-col rounded-2xl border border-border bg-card-imperial p-6 shadow-card transition-all hover:-translate-y-1 hover:border-primary/50"
+              className="group flex animate-fade-up flex-col rounded-2xl border border-border bg-card-imperial p-6 shadow-card transition-[transform,border-color,box-shadow] duration-300 will-change-transform hover:-translate-y-1 hover:border-primary/60 hover:shadow-gold"
               style={{ animationDelay: `${i * 60}ms` }}
             >
               <ModuleBadge name={m.icon} number={m.number} />
