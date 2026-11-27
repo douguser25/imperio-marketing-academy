@@ -13,6 +13,8 @@ import {
 } from "lucide-react";
 import heroImage from "@/assets/hero-imperio.webp";
 import { Button } from "@/components/ui/button";
+import { HeroScene } from "@/components/site/hero-scene";
+import { trackGlow, useReveal } from "@/hooks/use-reveal";
 import { ModuleBadge } from "@/components/site/module-icon";
 import { courseStats } from "@/content";
 import { useAuth } from "@/hooks/use-auth";
@@ -76,6 +78,7 @@ function Index() {
   const { totalLessons, totalMinutes, totalQuestions } = courseStats(modules);
   const firstModule = modules[0];
   const firstLesson = firstModule?.lessons[0];
+  useReveal([modules.length]);
   const stats = [
     { value: modules.length, label: "módulos" },
     { value: totalLessons, label: "aulas" },
@@ -95,10 +98,11 @@ function Index() {
           height={941}
           fetchPriority="high"
           decoding="async"
-          className="absolute inset-0 -z-10 h-full w-full object-cover object-[70%_center] opacity-60 md:opacity-100"
+          className="absolute inset-0 -z-10 h-full w-full object-cover object-[70%_center] opacity-35 md:opacity-50"
         />
         <div className="absolute inset-0 -z-10 bg-fade-left" />
         <div className="absolute inset-x-0 bottom-0 -z-10 h-48 bg-fade-bottom" />
+        <HeroScene />
         <div className="mx-auto flex min-h-[calc(100svh-4rem)] max-w-6xl flex-col justify-center px-5 pb-10 pt-16 md:min-h-[82vh] md:pt-20">
           <span className="inline-flex w-fit animate-fade-up items-center gap-2 rounded-full border border-primary/40 bg-background/50 px-4 py-1.5 text-xs font-medium text-primary backdrop-blur-md">
             <Sparkles className="h-3.5 w-3.5" />
@@ -139,7 +143,8 @@ function Index() {
             {highlights.map((h) => (
               <div
                 key={h.title}
-                className="flex min-w-0 flex-col items-start gap-3 rounded-2xl border border-primary/25 bg-background/55 p-3 backdrop-blur-md transition-colors hover:border-primary/60 sm:flex-row sm:items-center sm:p-4"
+                onPointerMove={trackGlow}
+                className="card-glow flex min-w-0 flex-col items-start gap-3 overflow-hidden rounded-2xl border border-primary/25 bg-background/55 p-3 backdrop-blur-md transition-[transform,border-color,box-shadow] duration-300 hover:-translate-y-0.5 hover:border-primary/70 hover:shadow-gold sm:flex-row sm:items-center sm:p-4"
               >
                 <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gold text-primary-foreground shadow-gold">
                   <h.icon className="h-5 w-5" strokeWidth={1.8} />
@@ -191,8 +196,9 @@ function Index() {
               key={m.id}
               to="/cursos/$moduloId"
               params={{ moduloId: m.id }}
-              className="group flex animate-fade-up flex-col rounded-2xl border border-border bg-card-imperial p-6 shadow-card transition-[transform,border-color,box-shadow] duration-300 will-change-transform hover:-translate-y-1 hover:border-primary/60 hover:shadow-gold"
-              style={{ animationDelay: `${i * 60}ms` }}
+              onPointerMove={trackGlow}
+              className="card-glow reveal group flex flex-col overflow-hidden rounded-2xl border border-border bg-card-imperial p-6 shadow-card transition-[transform,border-color,box-shadow] duration-300 will-change-transform hover:-translate-y-1 hover:border-primary/60 hover:shadow-gold"
+              style={{ transitionDelay: `${(i % 3) * 80}ms` }}
             >
               <ModuleBadge name={m.icon} number={m.number} />
               <h3 className="mt-5 text-2xl font-semibold leading-tight">{m.title}</h3>
@@ -208,7 +214,7 @@ function Index() {
 
       {/* Features */}
       <section className="mx-auto max-w-6xl px-5 pt-24">
-        <div className="rounded-3xl border border-border bg-surface p-8 md:p-12">
+        <div className="reveal rounded-3xl border border-border bg-surface p-8 md:p-12">
           <div className="max-w-xl">
             <p className="eyebrow">Como funciona</p>
             <h2 className="mt-3 text-4xl font-semibold md:text-5xl">Estude, pratique, teste e evolua</h2>
@@ -227,7 +233,7 @@ function Index() {
 
       {/* Commitment */}
       <section className="mx-auto max-w-6xl px-5 pt-24">
-        <div className="grid items-center gap-10 md:grid-cols-2">
+        <div className="reveal grid items-center gap-10 md:grid-cols-2">
           <div>
             <p className="eyebrow">Nosso compromisso</p>
             <h2 className="mt-3 text-4xl font-semibold md:text-5xl">
@@ -250,7 +256,7 @@ function Index() {
 
       {/* Final CTA */}
       <section className="mx-auto max-w-6xl px-5 pt-24">
-        <div className="relative overflow-hidden rounded-3xl border border-primary/30 bg-hero p-10 text-center md:p-16">
+        <div className="reveal relative overflow-hidden rounded-3xl border border-primary/30 bg-hero p-10 text-center md:p-16">
           <div className="pointer-events-none absolute inset-0 bg-grid" />
           <GraduationCap className="relative mx-auto h-10 w-10 animate-float text-primary" strokeWidth={1.4} />
           <h2 className="relative mt-5 text-4xl font-semibold md:text-5xl">Comece pela primeira aula</h2>

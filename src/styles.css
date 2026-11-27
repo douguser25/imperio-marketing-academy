@@ -328,3 +328,72 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ---------- Cinematic hero scene ---------- */
+@keyframes ring-spin { to { transform: rotateX(72deg) rotateZ(360deg); } }
+@keyframes ring-spin-rev { to { transform: rotateX(72deg) rotateZ(-360deg); } }
+@keyframes crown-float {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(-2deg); }
+  50% { transform: translate3d(0, -14px, 0) rotate(2deg); }
+}
+@keyframes particle-rise {
+  0% { transform: translate3d(0, 0, 0) scale(0.6); opacity: 0; }
+  15% { opacity: 1; }
+  100% { transform: translate3d(var(--drift, 20px), -70vh, 0) scale(1); opacity: 0; }
+}
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.55; transform: scale(1); }
+  50% { opacity: 0.9; transform: scale(1.08); }
+}
+@keyframes orbit-item {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(var(--rot, 0deg)); }
+  50% { transform: translate3d(0, -10px, 0) rotate(calc(var(--rot, 0deg) + 6deg)); }
+}
+
+@utility scene-ring {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  border-radius: 9999px;
+  border: 1.5px solid color-mix(in oklab, var(--primary) 70%, transparent);
+  box-shadow:
+    0 0 18px color-mix(in oklab, var(--primary) 55%, transparent),
+    inset 0 0 18px color-mix(in oklab, var(--primary) 35%, transparent);
+  transform: rotateX(72deg);
+  animation: ring-spin 18s linear infinite;
+  will-change: transform;
+}
+@utility scene-particle {
+  position: absolute;
+  bottom: -10px;
+  border-radius: 9999px;
+  background: var(--primary);
+  box-shadow: 0 0 8px var(--primary);
+  animation: particle-rise linear infinite;
+  will-change: transform, opacity;
+}
+@utility reveal {
+  opacity: 0;
+  transform: translate3d(0, 28px, 0);
+  transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  &[data-visible="true"] { opacity: 1; transform: none; }
+}
+@utility card-glow {
+  position: relative;
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    background: radial-gradient(240px circle at var(--mx, 50%) var(--my, 0%), color-mix(in oklab, var(--primary) 22%, transparent), transparent 70%);
+  }
+  &:hover::before { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scene-ring, .scene-particle, .scene-anim { animation: none !important; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+}
